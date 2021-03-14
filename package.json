@@ -1,8 +1,12 @@
 {
   "name": "coco_node",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.2.0",
+  "description": "Coco项目的后端",
   "main": "index.js",
+  "keywords": [
+    "TypeScript",
+    "Express"
+  ],
   "scripts": {
     "tsc": "tsc",
     "start": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
@@ -15,12 +19,8 @@
     "cookie-parser": "^1.4.5",
     "errorhandler": "^1.5.1",
     "express": "^4.17.1",
-    "express-graphql": "^0.11.0",
-    "express-session": "^1.17.1",
-    "graphql": "^15.3.0",
-    "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
-    "morgan": "^1.10.0",
+    "mongoose": "^5.12.0",
     "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "~3.5.1"
   },
@@ -29,8 +29,6 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/errorhandler": "^1.5.0",
-    "@types/express-session": "^1.17.0",
-    "@types/method-override": "0.0.31",
-    "@types/morgan": "^1.9.1"
+    "@types/method-override": "0.0.31"
   }
 }
