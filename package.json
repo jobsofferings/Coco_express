@@ -29,6 +29,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/errorhandler": "^1.5.0",
+    "@types/express-session": "^1.17.0",
     "@types/method-override": "0.0.31",
     "@types/morgan": "^1.9.1"
   }
