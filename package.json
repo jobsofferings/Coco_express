@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
-    "start": "ts-node-dev --respawn --transpileOnly ./app/app.ts",
+    "start": "ts-node-dev ./app/app.ts",
     "prod": "tsc && supervisor ./build/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +21,6 @@
     "express": "^4.17.1",
     "method-override": "^3.0.0",
     "mongoose": "^5.12.0",
-    "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "~3.5.1"
   },
   "author": "",
@@ -29,6 +28,7 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/errorhandler": "^1.5.0",
-    "@types/method-override": "0.0.31"
+    "@types/method-override": "0.0.31",
+    "ts-node-dev": "^1.1.6"
   }
 }
