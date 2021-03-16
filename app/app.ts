@@ -34,6 +34,17 @@ app.post("/article", (req, res) => {
   });
 })
 
+app.post("/articleDetail", (req, res) => {
+  const { id } = req.body
+  User.find({ id }, function (err: any, results: any) {
+    if (err) {
+      res.end('Error');
+    } else {
+      res.send(results[0])
+    }
+  });
+})
+
 app.listen(port, function () {
   console.info(`listening on port ${port}!`);
 });
