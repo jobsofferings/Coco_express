@@ -1,0 +1,1 @@
+export const DEFAULT_IMAGE = 'http://localhost:4397/article1.jpg';
