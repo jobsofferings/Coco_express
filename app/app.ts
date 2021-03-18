@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 import mongoClient = require('./mongoClient/index');
 
 const app: express.Application = express();
-const port = 4397;
+const port = 5000;
 
 app.use(express.static(path.join(__dirname, 'upload')));
 app.use(bodyParser.json());
