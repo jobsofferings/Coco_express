@@ -40,27 +40,15 @@ app.post("/article", (req, res) => {
     ]
   };
   const set = { _id: 0 };
-  User.find(where, set, function (err: Error, results: any) {
-    if (err) {
-      res.status(500).json({
-        result: 1,
-        error_info: '请求失败!'
+  User.find(where, set).countDocuments().then((total: number) => {
+    User.find(where).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
+      return res.status(200).json({
+        result: 0,
+        message: '请求成功',
+        total,
+        data,
       })
-    } else {
-      const total = results.length
-      User.find(where).skip(offset).limit(parseInt(limit)).exec(function (err: Error, data: any) {
-        if (err) return res.status(500).json({
-          result: 1,
-          error_info: '服务器繁忙，请稍后重试！'
-        })
-        return res.status(200).json({
-          result: 0,
-          message: '请求成功',
-          total,
-          data,
-        })
-      })
-    }
+    })
   });
 })
 
