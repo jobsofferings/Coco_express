@@ -40,8 +40,8 @@ app.post("/article", (req, res) => {
     ]
   };
   const set = { _id: 0 };
-  User.find(where, set).countDocuments().then((total: number) => {
-    User.find(where).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
+  User.find(where).countDocuments().then((total: number) => {
+    User.find(where, set).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
       return res.status(200).json({
         result: 0,
         message: '请求成功',
@@ -63,6 +63,13 @@ app.post("/articleDetail", (req, res) => {
       res.send(results[0])
     }
   });
+})
+
+app.use((error: Error, req: any, res: any, next: Function) => {
+  res.json({
+    ok: 0,
+    error
+  })
 })
 
 app.listen(port, function () {
