@@ -72,7 +72,7 @@ app.post("/starArticles", (req, res) => {
 
 app.post("/getFriendLink", (req, res) => {
   const where = {};
-  const set = { _id: 0 };
+  const set = { _id: 0, timer: 0 };
   FriendLink.find(where, set, {}, function (err: any, results: any) {
     if (err) {
       res.end('Error');
