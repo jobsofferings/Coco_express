@@ -2,7 +2,7 @@ import express = require('express');
 import path = require('path');
 import bodyParser = require('body-parser');
 import cookieParser = require('cookie-parser');
-import { Article, FriendLink } from './mongoClient/Schame'
+import { Article, FriendLink, Messages } from './mongoClient/Schame'
 import mongoClient = require('./mongoClient/index');
 
 const app: express.Application = express();
@@ -80,6 +80,30 @@ app.post("/getFriendLink", (req, res) => {
       res.send({ data: results })
     }
   });
+})
+
+
+app.post("/addMessage", (req, res) => {
+  const { messageContent } = req.body
+  // console.log(req.ip)
+  // 后续只允许一个IP留言五次（可以考虑是否为阈值）
+  if (!messageContent) {
+    return res.json({
+      flag: false,
+      message: '系统错误!',
+    })
+  }
+  const data = {
+    messageContent,
+    username: 'ip',
+    time: new Date().getTime().toString()
+  }
+  Messages.create(data, (err: any, results: any) => {
+    res.json({
+      flag: !err,
+      message: err ? '系统错误!' : '留言成功!',
+    })
+  })
 })
 
 app.use((error: Error, req: any, res: any, next: Function) => {

@@ -18,4 +18,11 @@ const FriendLinkSchema = new Schema({
 });
 const FriendLink = mongoose.model("friendlink", FriendLinkSchema);
 
-export { Article, FriendLink }
+const MessageSchema = new Schema({
+  messageContent: { type: String },
+  username: { type: String },
+  time: { type: String },
+}); 
+const Messages = mongoose.model("message", MessageSchema);
+
+export { Article, FriendLink, Messages }
