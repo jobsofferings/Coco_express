@@ -2,7 +2,7 @@ import express = require('express');
 import path = require('path');
 import bodyParser = require('body-parser');
 import cookieParser = require('cookie-parser');
-const mongoose = require('mongoose');
+import { Article, FriendLink } from './mongoClient/Schame'
 import mongoClient = require('./mongoClient/index');
 
 const app: express.Application = express();
@@ -23,14 +23,6 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const Schema = mongoose.Schema;
-const articleSchema = new Schema({
-  title: { type: String },
-  text_md: { type: String },
-  link: { type: Number },
-  read: { type: Number },
-});
-const User = mongoose.model("article", articleSchema);
 
 app.post("/article", (req, res) => {
   const { offset, limit, key } = req.body
@@ -40,8 +32,8 @@ app.post("/article", (req, res) => {
     ]
   };
   const set = { _id: 0 };
-  User.find(where).countDocuments().then((total: number) => {
-    User.find(where, set).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
+  Article.find(where).countDocuments().then((total: number) => {
+    Article.find(where, set).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
       return res.status(200).json({
         result: 0,
         message: '请求成功',
@@ -56,11 +48,36 @@ app.post("/articleDetail", (req, res) => {
   const { id } = req.body
   const where = { id };
   const set = { _id: 0 };
-  User.find(where, set, function (err: any, results: any) {
+  Article.find(where, set, {}, function (err: any, results: any) {
     if (err) {
       res.end('Error');
     } else {
       res.send(results[0])
+    }
+  });
+})
+
+app.post("/starArticles", (req, res) => {
+  const { limit = 5 } = req.body
+  const where = {};
+  const set = { _id: 0 };
+  Article.find(where, set, { limit, sort: [[['read', -1]]] }, function (err: any, results: any) {
+    if (err) {
+      res.end('Error');
+    } else {
+      res.send({ data: results })
+    }
+  });
+})
+
+app.post("/getFriendLink", (req, res) => {
+  const where = {};
+  const set = { _id: 0 };
+  FriendLink.find(where, set, {}, function (err: any, results: any) {
+    if (err) {
+      res.end('Error');
+    } else {
+      res.send({ data: results })
     }
   });
 })
