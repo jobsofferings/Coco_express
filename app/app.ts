@@ -82,11 +82,9 @@ app.post("/getFriendLink", (req, res) => {
   });
 })
 
-
 app.post("/addMessage", (req, res) => {
-  const { messageContent } = req.body
-  // console.log(req.ip)
-  // 后续只允许一个IP留言五次（可以考虑是否为阈值）
+  const { body, ip } = req
+  const { messageContent } = body
   if (!messageContent) {
     return res.json({
       flag: false,
@@ -95,7 +93,7 @@ app.post("/addMessage", (req, res) => {
   }
   const data = {
     messageContent,
-    username: 'ip',
+    ip,
     time: new Date().getTime().toString()
   }
   Messages.create(data, (err: any, results: any) => {
