@@ -2,7 +2,10 @@ import express = require('express');
 import path = require('path');
 import bodyParser = require('body-parser');
 import cookieParser = require('cookie-parser');
+import bcrypt = require('bcrypt');
 import { Article, FriendLink, Messages } from './mongoClient/Schame'
+import { User } from './mongoClient/UserSchema'
+import { jwtSign, jwtCheck } from './config/jwt'
 import mongoClient = require('./mongoClient/index');
 
 const app: express.Application = express();
@@ -23,6 +26,72 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.post('/sign', (req, res) => {
+  const { username, password, nickname } = req.body
+  if (username && password) {
+    const hashPwd = bcrypt.hashSync(password, 10)
+    User.create({
+      username, password: hashPwd, nickname
+    }, (err, data) => {
+      if (err) {
+        res.send({
+          flag: false,
+          msg: '注册失败'
+        })
+      } else {
+        // 在这里设置cookie或者返回信息
+        res.send({
+          flag: true,
+          msg: '注册成功'
+        })
+      }
+    })
+  } else {
+    res.send({
+      flag: false,
+      msg: '参数错误'
+    })
+  }
+})
+
+app.post('/login', (req, res) => {
+  console.log(req.cookies);
+  console.log(req.cookies.isFirst);
+  const { username, password } = req.body
+  if (username && password) {
+    User.find({ username }, (err, data) => {
+      if (err || !data.length) {
+        res.send({
+          flag: false,
+          msg: '登录失败'
+        })
+      } else {
+        const isPwdValid = bcrypt.compareSync(password, data[0].password)
+        if (isPwdValid) {
+          const token = jwtSign({ _id: data[0]._id })
+          // 部署一下测试下
+          res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+          res.cookie('nickname', data[0].nickname, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+          res.cookie('username', data[0].username, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+          res.send({
+            flag: true,
+            msg: '登录成功',
+          })
+        } else {
+          res.send({
+            flag: false,
+            msg: '密码错误'
+          })
+        }
+      }
+    })
+  } else {
+    res.send({
+      flag: false,
+      msg: '参数错误'
+    })
+  }
+})
 
 app.post("/article", (req, res) => {
   const { offset, limit, key } = req.body
@@ -82,7 +151,7 @@ app.post("/getFriendLink", (req, res) => {
   });
 })
 
-app.post("/addMessage", (req, res) => {
+app.post("/addMessage", jwtCheck, (req, res) => {
   const { body, ip } = req
   const { messageContent } = body
   if (!messageContent) {
