@@ -42,9 +42,9 @@ app.post('/sign', (req, res) => {
         })
       } else {
         const token = jwtSign({ _id: data._id })
-        res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-        res.cookie('nickname', data.nickname, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-        res.cookie('username', data.username, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+        res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+        res.cookie('nickname', data.nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+        res.cookie('username', data.username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
         res.send({
           flag: true,
           msg: '注册成功'
@@ -72,10 +72,9 @@ app.post('/login', (req, res) => {
         const isPwdValid = bcrypt.compareSync(password, data[0].password)
         if (isPwdValid) {
           const token = jwtSign({ _id: data[0]._id })
-          // 部署一下测试下
-          res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-          res.cookie('nickname', data[0].nickname, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-          res.cookie('username', data[0].username, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+          res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+          res.cookie('nickname', data[0].nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+          res.cookie('username', data[0].username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
           res.send({
             flag: true,
             msg: '登录成功',
