@@ -12,7 +12,7 @@ export const jwtCheck = (req: any, res: any, next: any) => { // token验证函�
   jwt.verify(token, jwtKey, (err: any, data: any) => {
     if (err) {
       res.send({
-        code: '999999',
+        flag: false,
         msg: 'token无效'
       })
     } else {

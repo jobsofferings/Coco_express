@@ -15,8 +15,9 @@ const ALLOW_ORIGIN_LIST = ['http://localhost:3000', 'http://www.jobsofferings.cn
 app.all('*', function (req, res, next) {
   if (ALLOW_ORIGIN_LIST.includes(req.headers.origin || '')) {
     res.header('Access-Control-Allow-Origin', req.headers.origin); //当允许携带cookies此处的白名单不能写’*’
-    res.header('Access-Control-Allow-Headers', 'content-type,Content-Length, Authorization,Origin,Accept,X-Requested-With'); //允许的请求头
+    res.header('Access-Control-Allow-Headers', 'content-type,Content-Length, Authorization,Origin,Accept,X-Requested-With,token'); //允许的请求头
     res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT'); //允许的请求方法
+    res.header('Access-Control-Allow-Credentials', 'true');
   }
   next();
 });
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/sign', (req, res) => {
   const { username, password, nickname } = req.body
+  // 注意，这里后续要判断是否有同名
   if (username && password) {
     const hashPwd = bcrypt.hashSync(password, 10)
     User.create({
@@ -39,7 +41,10 @@ app.post('/sign', (req, res) => {
           msg: '注册失败'
         })
       } else {
-        // 在这里设置cookie或者返回信息
+        const token = jwtSign({ _id: data._id })
+        res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+        res.cookie('nickname', data.nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+        res.cookie('username', data.username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
         res.send({
           flag: true,
           msg: '注册成功'
@@ -55,8 +60,6 @@ app.post('/sign', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  console.log(req.cookies);
-  console.log(req.cookies.isFirst);
   const { username, password } = req.body
   if (username && password) {
     User.find({ username }, (err, data) => {
@@ -70,9 +73,9 @@ app.post('/login', (req, res) => {
         if (isPwdValid) {
           const token = jwtSign({ _id: data[0]._id })
           // 部署一下测试下
-          res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-          res.cookie('nickname', data[0].nickname, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
-          res.cookie('username', data[0].username, { expires: new Date(Date.now() + 60 * 60 * 1000), httpOnly: true });
+          res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+          res.cookie('nickname', data[0].nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+          res.cookie('username', data[0].username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
           res.send({
             flag: true,
             msg: '登录成功',
@@ -173,7 +176,7 @@ app.post("/addMessage", jwtCheck, (req, res) => {
   })
 })
 
-app.get("/testLink", jwtCheck, (req, res) => {
+app.get("/testLink", (req, res) => {
   res.json({ flag: true })
 })
 
