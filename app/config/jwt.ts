@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { getItemByCookie } from './util'
 
 const jwtKey = 'junkaicool' // token生成的密匙，根据自己需求定义
 
@@ -8,7 +9,7 @@ export const jwtSign = (data: any) => { // token生成函数，有效时间为�
 }
 
 export const jwtCheck = (req: any, res: any, next: any) => { // token验证函数
-  const token = req.headers.token
+  const token = getItemByCookie(req)
   jwt.verify(token, jwtKey, (err: any, data: any) => {
     if (err) {
       res.send({
