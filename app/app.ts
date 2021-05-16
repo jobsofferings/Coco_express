@@ -173,6 +173,10 @@ app.post("/addMessage", jwtCheck, (req, res) => {
   })
 })
 
+app.get("/testLink", jwtCheck, (req, res) => {
+  res.json({ flag: true })
+})
+
 app.use((error: Error, req: any, res: any, next: Function) => {
   res.json({
     ok: 0,
