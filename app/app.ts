@@ -29,34 +29,42 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/sign', (req, res) => {
   const { username, password, nickname } = req.body
-  // 注意，这里后续要判断是否有同名
-  if (username && password) {
-    const hashPwd = bcrypt.hashSync(password, 10)
-    User.create({
-      username, password: hashPwd, nickname
-    }, (err, data) => {
-      if (err) {
-        res.send({
-          flag: false,
-          msg: '注册失败'
+  User.find({ username }, (err, data) => {
+    if (!data.length) {
+      if (username && password) {
+        const hashPwd = bcrypt.hashSync(password, 10)
+        User.create({
+          username, password: hashPwd, nickname
+        }, (err, data) => {
+          if (err) {
+            res.send({
+              flag: false,
+              msg: '注册失败'
+            })
+          } else {
+            const token = jwtSign({ _id: data._id })
+            res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+            res.cookie('nickname', data.nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+            res.cookie('username', data.username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
+            res.send({
+              flag: true,
+              msg: '注册成功'
+            })
+          }
         })
       } else {
-        const token = jwtSign({ _id: data._id })
-        res.cookie('token', token, { expires: new Date(Date.now() + 60 * 60 * 1000) });
-        res.cookie('nickname', data.nickname, { expires: new Date(Date.now() + 60 * 60 * 1000) });
-        res.cookie('username', data.username, { expires: new Date(Date.now() + 60 * 60 * 1000) });
         res.send({
-          flag: true,
-          msg: '注册成功'
+          flag: false,
+          msg: '参数错误'
         })
       }
-    })
-  } else {
-    res.send({
-      flag: false,
-      msg: '参数错误'
-    })
-  }
+    } else {
+      res.send({
+        flag: false,
+        msg: '该用户名已注册'
+      })
+    }
+  })
 })
 
 app.post('/login', (req, res) => {
