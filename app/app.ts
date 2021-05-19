@@ -105,17 +105,16 @@ app.post('/login', (req, res) => {
 
 app.post("/article", (req, res) => {
   const { offset, limit, key } = req.body
-  const where = {
-    $or: [
+  const where: any = {};
+  if (key) {
+    where['$or'] = [
       { title: { $regex: new RegExp(key, 'i') } }
     ]
-  };
+  }
   const set = { _id: 0 };
   Article.find(where).countDocuments().then((total: number) => {
     Article.find(where, set).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
-      return res.status(200).json({
-        result: 0,
-        message: '请求成功',
+      return res.json({
         total,
         data,
       })
