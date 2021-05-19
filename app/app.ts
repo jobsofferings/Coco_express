@@ -111,7 +111,7 @@ app.post("/article", (req, res) => {
       { title: { $regex: new RegExp(key, 'i') } }
     ]
   }
-  const set = { _id: 0 };
+  const set = { _id: 0, summary: 0 };
   Article.find(where).countDocuments().then((total: number) => {
     Article.find(where, set).skip(offset).limit(parseInt(limit)).exec((err: Error, data: any) => {
       return res.json({

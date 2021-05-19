@@ -3,8 +3,13 @@ const Schema = mongoose.Schema;
 
 const articleSchema = new Schema({
   title: { type: String },
-  text_md: { type: String },
-  link: { type: Number },
+  summary: { type: String },
+  author: { type: String },
+  timer: { type: String },
+  headImgSrc: { type: String },
+  id: { type: String },
+  briefContent: { type: String },
+  like: { type: Number },
   read: { type: Number },
 });
 const Article = mongoose.model("article", articleSchema);
