@@ -138,7 +138,7 @@ app.post("/articleDetail", (req, res) => {
 app.post("/starArticles", (req, res) => {
   const { limit = 5 } = req.body
   const where = {};
-  const set = { _id: 0 };
+  const set = { _id: 0, summary: 0, briefContent: 0 };
   Article.find(where, set, { limit, sort: [[['read', -1]]] }, function (err: any, results: any) {
     if (err) {
       res.end('Error');
