@@ -160,7 +160,7 @@ app.post("/getFriendLink", (req, res) => {
   });
 })
 
-app.post("/addMessage", jwtCheck, (req, res) => {
+app.post("/addMessage", (req, res) => {
   const { body, ip } = req
   const { messageContent } = body
   if (!messageContent) {
@@ -188,7 +188,7 @@ app.get("/testLink", (req, res) => {
 
 app.use((error: Error, req: any, res: any, next: Function) => {
   res.json({
-    ok: 0,
+    code: 10001,
     error
   })
 })
